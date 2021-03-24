@@ -495,6 +495,11 @@ get_isp_subdevs(struct media_device *device, const char *devpath, rk_aiq_isp_t* 
         }
     }
 
+    if ((entity = media_get_entity_by_name(device, "rkcif_dvp", strlen("rkcif_dvp"))) ||
+        (entity = media_get_entity_by_name(device, "rkcif_lite_mipi_lvds", strlen("rkcif_lite_mipi_lvds"))) ||
+        (entity = media_get_entity_by_name(device, "rkcif_mipi_lvds", strlen("rkcif_mipi_lvds")))) {
+        strncpy(isp_info[index].linked_vicap, entity->info.name, sizeof(isp_info[index].linked_vicap));
+    }
 
     LOGI_CAMHW_SUBM(ISP20HW_SUBM, "model(%s): isp_info(%d): ispp-subdev entity name: %s\n",
                     device->info.model, index,
@@ -799,6 +804,7 @@ CamHwIsp20::initCamHwInfos()
                    strcmp(device->info.model, "rkcif_mipi_lvds") == 0 ||
                    strcmp(device->info.model, "rkcif_lite_mipi_lvds") == 0) {
             cif_info = get_cif_subdevs(device, sys_path, CamHwIsp20::mCifHwInfos.cif_info);
+            strncpy(cif_info->model_str, device->info.model, sizeof(cif_info->model_str));
         } else {
             goto media_unref;
         }
@@ -881,7 +887,10 @@ media_unref:
              * Determine which isp that vipCap is linked
              */
             for (i = 0; i < 2; i++) {
-                if (!CamHwIsp20::mIspHwInfos.isp_info[i].linked_sensor) {
+                LOGI_CAMHW_SUBM(ISP20HW_SUBM, "vicap %s, linked_vicap %s", s_full_info->cif_info->model_str,
+                    CamHwIsp20::mIspHwInfos.isp_info[i].linked_vicap);
+                if (strcmp(s_full_info->cif_info->model_str,
+                    CamHwIsp20::mIspHwInfos.isp_info[i].linked_vicap) == 0) {
                     s_full_info->isp_info = &CamHwIsp20::mIspHwInfos.isp_info[i];
                     s_full_info->ispp_info = &CamHwIsp20::mIspHwInfos.ispp_info[i];
                     LOGI_CAMHW_SUBM(ISP20HW_SUBM, "vicap link to isp(%d) to ispp(%d)\n",

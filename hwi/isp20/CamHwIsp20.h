@@ -59,6 +59,7 @@ typedef struct {
     char input_params_path[DEV_PATH_LEN];
     char mipi_luma_path[DEV_PATH_LEN];
     char mipi_dphy_rx_path[DEV_PATH_LEN];
+    char linked_vicap[DEV_PATH_LEN];
 } rk_aiq_isp_t;
 
 typedef struct {
@@ -109,6 +110,7 @@ typedef struct {
     char mipi_csi2_sd_path[DEV_PATH_LEN];
     char lvds_sd_path[DEV_PATH_LEN];
     char mipi_luma_path[DEV_PATH_LEN];
+    char model_str[DEV_PATH_LEN];
 } rk_aiq_cif_info_t;
 
 typedef struct {
