@@ -1951,8 +1951,8 @@ RkAiqAdhazHandleInt::processing()
     } else {
         if(shared->ctxCfigs[RK_AIQ_ALGO_TYPE_ADHAZ].cfg_com.isp_hw_version == 0)
             memcpy(&adhaz_proc_int->stats.dehaze_stats_v20, &ispStats->adehaze_stats.dehaze_stats_v20, sizeof(dehaze_stats_v20_t));
-        else if(shared->ctxCfigs[RK_AIQ_ALGO_TYPE_ADHAZ].cfg_com.isp_hw_version == 1);
-        memcpy(&adhaz_proc_int->stats.dehaze_stats_v21, &ispStats->adehaze_stats.dehaze_stats_v21, sizeof(dehaze_stats_v21_t));
+        else if(shared->ctxCfigs[RK_AIQ_ALGO_TYPE_ADHAZ].cfg_com.isp_hw_version == 1)
+            memcpy(&adhaz_proc_int->stats.dehaze_stats_v21, &ispStats->adehaze_stats.dehaze_stats_v21, sizeof(dehaze_stats_v21_t));
         memcpy(adhaz_proc_int->stats.other_stats.tmo_luma,
                ispStats->aec_stats.ae_data.extra.rawae_big.channelg_xy, sizeof(adhaz_proc_int->stats.other_stats.tmo_luma));
 
