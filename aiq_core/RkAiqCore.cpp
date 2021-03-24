@@ -1953,17 +1953,12 @@ void
 RkAiqCore::addDefaultAlgos(struct RkAiqAlgoDesCommExt* algoDes)
 {
     map<int, SmartPtr<RkAiqHandle>> algoMap;
-    for (int i = 0; i < RK_AIQ_ALGO_TYPE_MAX; i++) {
-        mAlogsSharedParams.ctxCfigs[i].calib =
-            const_cast<CamCalibDbContext_t*>(mAlogsSharedParams.calib);
-        mAlogsSharedParams.ctxCfigs[i].cfg_com.isp_hw_version = mIspHwVer;
-        mAlogsSharedParams.ctxCfigs[i].cfg_com.module_hw_version = algoDes[i].module_hw_ver;
-    }
 
     for (size_t i = 0; algoDes[i].des != NULL; i++) {
         int algo_type = algoDes[i].des->type;
         mAlogsSharedParams.ctxCfigs[algo_type].calib =
             const_cast<CamCalibDbContext_t*>(mAlogsSharedParams.calib);
+        mAlogsSharedParams.ctxCfigs[algo_type].cfg_com.isp_hw_version = mIspHwVer;
         mAlogsSharedParams.ctxCfigs[algo_type].cfg_com.module_hw_version = algoDes[i].module_hw_ver;
         algoMap[0] = newAlgoHandle(algoDes[i].des, false, algoDes[i].algo_ver);
         if (!algoMap[0].ptr()) {
