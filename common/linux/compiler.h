@@ -1,6 +1,11 @@
 #ifndef __LINUX_COMPILER_H
 #define __LINUX_COMPILER_H
 
+#ifdef __clang__
+# define __user
+# define __force
+#else
+
 #ifndef __ASSEMBLY__
 
 #ifdef __CHECKER__
@@ -564,4 +569,6 @@ static __always_inline void __write_once_size(volatile void *p, void *res, int s
 # define __kprobes
 # define nokprobe_inline    inline
 #endif
+
+#endif /* __clang__ */
 #endif /* __LINUX_COMPILER_H */

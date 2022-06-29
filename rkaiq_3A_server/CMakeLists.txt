@@ -54,7 +54,7 @@ endif()
 if(ADD_RK_AIQ)
 add_compile_options(-std=c++11)
 add_compile_options(-DADD_RK_AIQ)
-add_compile_options(-O0)
+add_compile_options(-O)
 # add_compile_options(-v)
 SET(RK_AIQ_LIB_DIR ${RK_AIQ_SOURCE_DIR}/all_lib/${CMAKE_BUILD_TYPE})
 message("rkaiq lib path" ${RK_AIQ_LIB_DIR})
@@ -65,7 +65,9 @@ ${RK_AIQ_SOURCE_DIR}/include/xcore/base/
 ${RK_AIQ_SOURCE_DIR}/include/algos/
 ${RK_AIQ_SOURCE_DIR}/include/common/
 ${RK_AIQ_SOURCE_DIR}/include/iq_parser/
+${RK_AIQ_SOURCE_DIR}/include/iq_parser2/
 ${RK_AIQ_SOURCE_DIR}/include/uAPI/
+${RK_AIQ_SOURCE_DIR}/include/uAPI2/
 ${RK_AIQ_SOURCE_DIR}/
 )
 SET(RK_AIQ_LIB rkaiq)
@@ -92,7 +94,7 @@ add_definitions(-D_CRT_SECURE_NO_WARNINGS)
 link_directories("${RK_AIQ_LIB_DIR}" "${GENMESH_LIBS_DIR}")
 ADD_EXECUTABLE(rkaiq_3A_server rkaiq_3A_server.cpp)
 
-target_link_libraries(rkaiq_3A_server ${RK_AIQ_LIB} pthread)
+target_link_libraries(rkaiq_3A_server ${RK_AIQ_LIB} pthread dl)
 
 install(TARGETS rkaiq_3A_server
 	RUNTIME DESTINATION /usr/bin

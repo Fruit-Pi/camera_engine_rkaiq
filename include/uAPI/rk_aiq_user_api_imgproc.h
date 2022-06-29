@@ -19,6 +19,7 @@
 #define _RK_AIQ_UAPI_IMGPROC_H_
 
 #include "base/xcam_common.h"
+#include "rk_aiq_user_api_common.h"
 #include "rk_aiq_user_api_sysctl.h"
 #include "rk_aiq_user_api_awb.h"
 #include "rk_aiq_user_api_ae.h"
@@ -34,6 +35,13 @@
 #include "rk_aiq_user_api_afec.h"
 #include "rk_aiq_user_api_aldch.h"
 #include "rk_aiq_user_api_acp.h"
+#include "rk_aiq_user_api_abayernr_v2.h"
+#include "rk_aiq_user_api_acnr_v1.h"
+#include "rk_aiq_user_api_aynr_v2.h"
+#include "rk_aiq_user_api_asharp_v3.h"
+
+
+
 
 /*
 *****************************
@@ -46,14 +54,6 @@ typedef enum dayNightScene_e {
     DAYNIGHT_SCENE_NIGHT = 1,
     DAYNIGHT_SCENE_INVAL,
 } dayNightScene_t;
-
-typedef enum opMode_e {
-    OP_AUTO   = 0,
-    OP_MANUAL = 1,
-    OP_SEMI_AUTO = 2,
-    OP_INVAL
-} opMode_t;
-
 
 typedef struct paRange_s {
     float max;
@@ -122,7 +122,7 @@ RKAIQ_BEGIN_DECLARE
 
 /*
 **********************************************************
-* Exposure
+*                        API of AEC module of V1
 **********************************************************
 */
 
@@ -138,17 +138,6 @@ RKAIQ_BEGIN_DECLARE
 XCamReturn rk_aiq_uapi_setExpMode(const rk_aiq_sys_ctx_t* ctx, opMode_t mode);
 XCamReturn rk_aiq_uapi_getExpMode(const rk_aiq_sys_ctx_t* ctx, opMode_t *mode);
 
-/*
-*****************************
-*
-* Desc: set exposure mode
-* Argument:
-*   mode: if mode is set to manual, gain&time initial value will be used
-*
-*****************************
-*/
-XCamReturn rk_aiq_uapi_setAeMode(const rk_aiq_sys_ctx_t* ctx, aeMode_t mode);
-XCamReturn rk_aiq_uapi_getAeMode(const rk_aiq_sys_ctx_t* ctx, aeMode_t *mode);
 /*
 *****************************
 *
@@ -189,11 +178,6 @@ XCamReturn rk_aiq_uapi_getExpGainRange(const rk_aiq_sys_ctx_t* ctx, paRange_t *g
 XCamReturn rk_aiq_uapi_setExpTimeRange(const rk_aiq_sys_ctx_t* ctx, paRange_t *time);
 XCamReturn rk_aiq_uapi_getExpTimeRange(const rk_aiq_sys_ctx_t* ctx, paRange_t *time);
 
-/*
-**********************************************************
-* Auto exposure advanced features
-**********************************************************
-*/
 /*
 *****************************
 *
@@ -293,20 +277,6 @@ XCamReturn rk_aiq_uapi_getWBMode(const rk_aiq_sys_ctx_t* ctx, opMode_t *mode);
 */
 XCamReturn rk_aiq_uapi_lockAWB(const rk_aiq_sys_ctx_t* ctx);
 XCamReturn rk_aiq_uapi_unlockAWB(const rk_aiq_sys_ctx_t* ctx);
-
-
-/*
-*****************************
-*
-* Desc: set auto white balance mode
-* Argument:
-*
-*
-*****************************
-*/
-
-XCamReturn rk_aiq_uapi_setAWBRange(const rk_aiq_sys_ctx_t* ctx, awbRange_t range);
-XCamReturn rk_aiq_uapi_getAWBRange(const rk_aiq_sys_ctx_t* ctx, awbRange_t *range);
 
 /*
 *****************************
@@ -470,14 +440,49 @@ XCamReturn rk_aiq_uapi_getSearchPath(const rk_aiq_sys_ctx_t* ctx, rk_aiq_af_sec_
 /*
 *****************************
 *
-* Desc: set optical zoom position
+* Desc: af serach path record
 * Argument:
-*   pos:  [1, 2000]
+*
 *
 *****************************
 */
+XCamReturn rk_aiq_uapi_getSearchResult(const rk_aiq_sys_ctx_t* ctx, rk_aiq_af_result_t* result);
+
+/*
+*****************************
+*
+* Desc: Focus Correstion
+* Argument:
+*
+*
+*****************************
+*/
+XCamReturn rk_aiq_uapi_FocusCorrestion(const rk_aiq_sys_ctx_t* ctx);
+
+/*
+*****************************
+*
+* Desc: Zoom
+* Argument:
+*
+*
+*****************************
+*/
+XCamReturn rk_aiq_uapi_getZoomRange(const rk_aiq_sys_ctx_t* ctx, rk_aiq_af_zoomrange* range);
 XCamReturn rk_aiq_uapi_setOpZoomPosition(const rk_aiq_sys_ctx_t* ctx, int pos);
 XCamReturn rk_aiq_uapi_getOpZoomPosition(const rk_aiq_sys_ctx_t* ctx, int *pos);
+XCamReturn rk_aiq_uapi_setZoomZeroPos(const rk_aiq_sys_ctx_t* ctx, int zero_pos);
+
+/*
+*****************************
+*
+* Desc: Zoom Correstion
+* Argument:
+*
+*
+*****************************
+*/
+XCamReturn rk_aiq_uapi_ZoomCorrestion(const rk_aiq_sys_ctx_t* ctx);
 
 /*
 **********************************************************
@@ -570,7 +575,7 @@ XCamReturn rk_aiq_uapi_getMTNRStrth(const rk_aiq_sys_ctx_t* ctx, bool *on, unsig
 
 /*
 **********************************************************
-* Dehazer
+* Dehaze
 **********************************************************
 */
 /*
@@ -579,8 +584,8 @@ XCamReturn rk_aiq_uapi_getMTNRStrth(const rk_aiq_sys_ctx_t* ctx, bool *on, unsig
 * Desc: set/get dehaze mode
 * Argument:
 *   mode:
-*     auto: auto dehaze
-*     manual：manual dehaze
+*     auto: auto dehaze, when use auto, equal use rk_aiq_uapi_enableDhz
+*     manual: Manual dehaze, when needs to use manual, please use rk_aiq_uapi_setMDhzStrth
 *
 *****************************
 */
@@ -594,11 +599,25 @@ XCamReturn rk_aiq_uapi_getDhzMode(const rk_aiq_sys_ctx_t* ctx, opMode_t *mode);
 *     this function is active for dehaze is manual mode
 * Argument:
 *   level: [0, 10]
+*   Do not need to use rk_aiq_uapi_enableDhz and rk_aiq_uapi_setDhzMode before use this
 *
 *****************************
 */
 XCamReturn rk_aiq_uapi_setMDhzStrth(const rk_aiq_sys_ctx_t* ctx, bool on, unsigned int level);
 XCamReturn rk_aiq_uapi_getMDhzStrth(const rk_aiq_sys_ctx_t* ctx, bool* on, unsigned int* level);
+
+/*
+*****************************
+*
+* Desc: enable dehaze
+* Argument:
+*   When dehaze enable, dehaze on and para use use IQ xml
+*   When dehaze disable, dehaze off and enhance para use use IQ xml
+*
+*****************************
+*/
+XCamReturn rk_aiq_uapi_enableDhz(const rk_aiq_sys_ctx_t* ctx);
+XCamReturn rk_aiq_uapi_disableDhz(const rk_aiq_sys_ctx_t* ctx);
 
 /*
 *****************************
@@ -612,16 +631,6 @@ XCamReturn rk_aiq_uapi_getMDhzStrth(const rk_aiq_sys_ctx_t* ctx, bool* on, unsig
 */
 XCamReturn rk_aiq_uapi_setDarkAreaBoostStrth(const rk_aiq_sys_ctx_t* ctx, unsigned int level);
 XCamReturn rk_aiq_uapi_getDarkAreaBoostStrth(const rk_aiq_sys_ctx_t* ctx, unsigned int *level);
-
-/*
-*****************************
-*
-* Desc: enable/disable dehaze
-*
-*****************************
-*/
-XCamReturn rk_aiq_uapi_enableDhz(const rk_aiq_sys_ctx_t* ctx);
-XCamReturn rk_aiq_uapi_disableDhz(const rk_aiq_sys_ctx_t* ctx);
 
 /*
 **********************************************************
@@ -638,6 +647,7 @@ XCamReturn rk_aiq_uapi_disableDhz(const rk_aiq_sys_ctx_t* ctx);
 *****************************
 */
 XCamReturn rk_aiq_uapi_setContrast(const rk_aiq_sys_ctx_t* ctx, unsigned int level);
+XCamReturn rk_aiq_uapi_getContrast(const rk_aiq_sys_ctx_t* ctx, unsigned int *level);
 
 /*
 *****************************
@@ -683,9 +693,8 @@ XCamReturn rk_aiq_uapi_getSharpness(const rk_aiq_sys_ctx_t* ctx, unsigned int *l
 /*
 *****************************
 *
-* Desc: Adjust image gamma level
-* Argument:
-*    level: gamma level, [0, 100]
+* Desc: Adjust image gamma
+
 *****************************
 */
 XCamReturn rk_aiq_uapi_setGammaCoef(const rk_aiq_sys_ctx_t* ctx, rk_aiq_gamma_attrib_t gammaAttr);
@@ -755,7 +764,7 @@ XCamReturn rk_aiq_uapi_setFecEn(const rk_aiq_sys_ctx_t* ctx, bool en);
 *****************************
 */
 XCamReturn rk_aiq_uapi_setFecCorrectDirection(const rk_aiq_sys_ctx_t* ctx,
-                                              const fec_correct_direction_t direction);
+        const fec_correct_direction_t direction);
 /*
 *****************************
 *
@@ -773,6 +782,16 @@ XCamReturn rk_aiq_uapi_setFecBypass(const rk_aiq_sys_ctx_t* ctx, bool en);
 *****************************
 */
 XCamReturn rk_aiq_uapi_setFecCorrectLevel(const rk_aiq_sys_ctx_t* ctx, int correctLevel);
+
+/*
+*****************************
+*
+* Desc:
+* Argument:
+*****************************
+*/
+XCamReturn rk_aiq_uapi_setFecCorrectMode(const rk_aiq_sys_ctx_t* ctx,
+        const fec_correct_mode_t mode);
 
 /*
 *****************************

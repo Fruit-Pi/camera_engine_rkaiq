@@ -63,7 +63,6 @@ int initDrmDsp() {
     return -1;
 
   rkRgaInit();
-  return 0;
 }
 
 void deInitDrmDsp() {
@@ -336,5 +335,4 @@ int drmDspFrame(int srcWidth, int srcHeight, int dispWidth, int dispHeight,
   else
     pDrmDsp->nextbo = pDrmDsp->bo[0];
 #endif
-  return 0;
 }

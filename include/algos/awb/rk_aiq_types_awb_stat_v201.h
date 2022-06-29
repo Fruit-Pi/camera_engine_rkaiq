@@ -121,6 +121,9 @@ typedef struct rk_aiq_awb_stat_cfg_v201_s {
     rk_aiq_awb_xy_type_v201_t xyRangeTypeForBlkStatistics; //used when blkMeasureMode>BLK_MEASURE_MODE_ALL
     rk_aiq_awb_blk_stat_realwp_ill_e illIdxForBlkStatistics; //blkMeasureMode used when blkMeasureMode>BLK_MEASURE_MODE_ALL
     bool blkStatisticsWithLumaWeightEn;
+    int  groupIllIndxCurrent;//for time share
+    int  IllIndxSetCurrent[RK_AIQ_AWB_MAX_WHITEREGIONS_NUM];//for time share
+    char timeSign[64];
 } rk_aiq_awb_stat_cfg_v201_t;
 
 //typedef struct stat3a_lightType_s
@@ -153,6 +156,8 @@ typedef struct rk_aiq_awb_stat_res_v201_s {
     rk_aiq_awb_stat_wp_res_v201_t excWpRangeResult[RK_AIQ_AWB_STAT_WP_RANGE_NUM_V201];
     //wpno histogram
     unsigned int WpNoHist[RK_AIQ_AWB_WP_HIST_BIN_NUM];
+
+    rk_aiq_awb_stat_cfg_v201_t  awb_cfg_effect_v201;
 } rk_aiq_awb_stat_res_v201_t;
 
 #endif

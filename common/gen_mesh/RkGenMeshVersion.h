@@ -78,10 +78,89 @@
   * v2.0.3
   *  - date: 2020-10-10
   *  - FEC&LDCH: fix some small bugs
-  */
+  
+  * v2.0.4
+  *  - date: 2020-10-15
+  *  - FEC: change mesh border from (srcW-3, srcH-3) to (srcW-1, srcH-1)
 
-#define RK_GENMESH_VERSION_REAL_V "v2.0.3"
-#define RK_GENMESH_RELEASE_DATE "2020-10-10"
+  * v2.0.5
+  *  - date: 2020-10-28
+  *  - FEC: consider the case when the width and height of the output image are different from the input,
+			the naming rules of mesh table are specified as(using "meshxi, level=0, input=3840x2160, output=1920x1080, both x and y direction are corrected" as an example):
+			level000_1920x1080from3840x2160_both_correct_meshxi.bin
+
+  * v3.0.0
+  *  - date: 2020-11-10
+  *  - FEC: add an option: saveMaxFovX--flag of retaining maximum FOV in X direction(horizontal direction)
+			so there are 6 options when combined with correctX and correctY flags:
+			correctX	correctY	saveMaxFovX
+			   1			0		 (0 or 1)
+			   0			1		 (0 or 1)
+			   1			1		 (0 or 1)
+  *  - LDCH: add an option: saveMaxFovX
+			 users can choose whether to retain the max FOV in X direction or not.
+			 when saveMaxFovX=1, users choose to save max FOV in X direction and tolerate slight compression distortion in middle part.
+
+  * v3.0.1
+  *  - date: 2020-11-12
+  *  - FEC & LDCH: add a Macro definition "INV_POLY_COEFF_NUM" to define the coefficients' number of polynomial fitting
+  *  - FEC: the code was test in the case when the horizontal FOV is close to 180 degrees and the result is OK.
+
+  * v3.0.2
+  *  - date: 2020-11-27
+  *  - FEC: add an option: isFecOld--flag for different versions of FEC hardware
+			isFecOld = 1: for old FEC
+			isFecOld = 0: for new FEC
+ 
+ * v3.0.3
+  *  - date: 2020-12-22
+  *  - LDCH: add an option: isLdchOld--flag for different versions of LDCH hardware
+			isLdchOld = 1: for old LDCH
+			isLdchOld = 0: for new LDCH
+
+  * v4.0.0
+  *  - date: 2021-01-19
+  *  - genScaleMeshNLevel:
+			add a new function interface: LDCH mesh(for x direction) + FEC mesh(for y direction)
+			1) CameraCoeff of original resolution, e.g. 3840*2160 --> LDCH mesh --> LDCH
+			2) CameraCoeff of original resolution, e.g. 3840*2160 --> 1920*1080 FEC mesh + 1920*1080 image data --> FEC
+
+  * v4.0.1
+  *  - date: 2021-01-21
+  *  - genCropScaleMeshNLevel:
+			add a new function interface: LDCH mesh(for x direction) + FEC mesh(for y direction)
+			1) CameraCoeff of original resolution, e.g. 3840*2160 --> LDCH mesh --> LDCH
+			2) CameraCoeff of original resolution, e.g. 3840*2160 --> crop at any position(pW,pH) to get any size, e.g. 1600*900 --> scale to 1920*1080 FEC mesh + 1920*1080 image data --> FEC
+
+  * v4.0.2
+  *  - date: 2021-06-23
+  *  - LDCH: add genLdchMeshFixedZeroCorrect function
+  
+  * v4.0.3
+  *  - date: 2021-06-28
+  *  - LDCH: modify the last row of zero correct mesh for LDCH bug.
+
+  * v4.0.4
+  *  - date: 2021-07-05
+  *  - LDCH: modify the middle row of mesh(minus 6 pixels) when saveMaxFovX == 1 for old LDCH bug(avoid the last pixel in the row map to the interval of [last-5, last-3]).
+			 valid flag: need to set isLdchOld = 1.
+  
+  * v4.0.5
+  *  - date: 2021-08-12
+  *  - LDCH: last version didnot completely solve this bug: the middle row of mesh(minus 6 pixels) when saveMaxFovX == 1 for old LDCH bug(avoid the last pixel in the row map to the interval of [last-5, last-3]).
+			 valid flag: need to set isLdchOld = 1.
+  
+  * v4.0.6
+  *  - date: 2021-08-14
+  *  - LDCH: consider these case:
+             1.rhoMaxW < rohMaxH for old LDCH bug(avoid the last pixel in the row map to the interval of [last-5, last-3]).
+			 2.identity mesh between penultimate and last rows may cause old LDCH bug when interpolation.
+			 valid flag: need to set isLdchOld = 1.
+
+*/
+
+#define RK_GENMESH_VERSION_REAL_V "v4.0.6"
+#define RK_GENMESH_RELEASE_DATE "2021-08-14"
 
   /******* DO NOT EDIT THE FOLLOWINGS *******/
 

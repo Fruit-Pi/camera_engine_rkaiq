@@ -3,7 +3,7 @@
 #include <math.h>
 //#include <cmath>
 
-/* FEC: 初始化，根据图像输出分辨率，计算FEC映射表的相关参数，申请需要的buffer */
+/* FEC: 初始化, 根据图像输出分辨率, 计算FEC映射表的相关参数, 申请需要的buffer */
 void genFecMeshInit(int srcW, int srcH, int dstW, int dstH, FecParams &fecParams, CameraCoeff &camCoeff)
 {
 	fecParams.srcW = srcW;
@@ -32,12 +32,12 @@ void genFecMeshInit(int srcW, int srcH, int dstW, int dstH, FecParams &fecParams
 	/* mesh表降采样的步长 */
 	fecParams.meshStepW = meshStepW;
 	fecParams.meshStepH = meshStepH;
+	//fecParams.meshStepW = double(dstW) / double(fecParams.meshSizeW);
+	//fecParams.meshStepH = double(dstH) / double(fecParams.meshSizeH);
 
 	/* MeshXY的大小 */
 	fecParams.meshSize1bin = fecParams.meshSizeW * fecParams.meshSizeH;
-	/* 浮点的mesh网格 */
-	fecParams.mapx = new double[fecParams.meshSize1bin];
-	fecParams.mapy = new double[fecParams.meshSize1bin];
+
 	/* 定点的小表MeshXY */
 	fecParams.pMeshXY = new unsigned short[fecParams.meshSize1bin * 2 * 2];
 
@@ -61,8 +61,6 @@ void genFecMeshInit(int srcW, int srcH, int dstW, int dstH, FecParams &fecParams
 /* FEC: 反初始化 */
 void genFecMeshDeInit(FecParams &fecParams)
 {
-	delete[] fecParams.mapx;
-	delete[] fecParams.mapy;
 	delete[] fecParams.pMeshXY;
 }
 
@@ -88,7 +86,7 @@ void freeFecMesh(unsigned short *pMeshXI, unsigned char *pMeshXF, unsigned short
 /* =============================================================================================================================================================================== */
 
 
-/* LDCH: 初始化，根据图像输出分辨率，计算LDCH映射表的相关参数，申请需要的buffer */
+/* LDCH: 初始化, 根据图像输出分辨率, 计算LDCH映射表的相关参数, 申请需要的buffer */
 void genLdchMeshInit(int srcW, int srcH, int dstW, int dstH, LdchParams &ldchParams, CameraCoeff &camCoeff)
 {
 	ldchParams.srcW = srcW;
@@ -104,19 +102,19 @@ void genLdchMeshInit(int srcW, int srcH, int dstW, int dstH, LdchParams &ldchPar
 	{
 		ldchParams.mapxFixBit = 3;
 	}
-	// mesh表的宽，如2688->169
+	// mesh表的宽, 如2688->169
 	ldchParams.meshSizeW = ((dstW + (1 << map_scale_bit_X) - 1) >> map_scale_bit_X) + 1;
-	// mesh表的高，如1520->191
+	// mesh表的高, 如1520->191
 	ldchParams.meshSizeH = ((dstH + (1 << map_scale_bit_Y) - 1) >> map_scale_bit_Y) + 1;
 
 	/* mesh表降采样的步长 */
-	ldchParams.meshStepW = double(dstW) / double(ldchParams.meshSizeW);
-	ldchParams.meshStepH = double(dstH) / double(ldchParams.meshSizeH);
-	//ldchParams.meshStepW = 16;
-	//ldchParams.meshStepH = 8;
+	//ldchParams.meshStepW = double(dstW) / double(ldchParams.meshSizeW - 1);/* 这里减1需要硬件上验证一下 */
+	//ldchParams.meshStepH = double(dstH) / double(ldchParams.meshSizeH - 1);
+	ldchParams.meshStepW = 16;
+	ldchParams.meshStepH = 8;
 
 	/* 对齐后的宽 */
-	int mapWidAlign = ((ldchParams.meshSizeW + 1) >> 1) << 1;//例如，分辨率2688*1520，169->170
+	int mapWidAlign = ((ldchParams.meshSizeW + 1) >> 1) << 1;//例如, 分辨率2688*1520, 169->170
 	ldchParams.meshSize = mapWidAlign * ldchParams.meshSizeH;
 
 	//ldchParams.meshSizeW = mapWidAlign;
@@ -129,8 +127,14 @@ void genLdchMeshInit(int srcW, int srcH, int dstW, int dstH, LdchParams &ldchPar
 	genLdchPreCalcPart(ldchParams, camCoeff);
 
 	/* LDCH: 计算LDCH能够校正的最大程度 */
-	calcLdchMaxLevel(ldchParams, camCoeff);
-	//ldchParams.maxLevel = 251;
+	if (ldchParams.isLdchOld)
+	{
+		calcLdchMaxLevel(ldchParams, camCoeff);
+	}
+	else
+	{
+		ldchParams.maxLevel = 255;
+	}
 }
 
 /* LDCH: 反初始化 */
